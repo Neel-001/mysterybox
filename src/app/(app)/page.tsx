@@ -60,7 +60,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="text-center p-4 md:p-6 bg-gray-900 text-white">
-        © 2023 MysteryBox. All rights reserved.
+        © 2025 MysteryBox. All rights reserved.
       </footer>
     </>
   );
