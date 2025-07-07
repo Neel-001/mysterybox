@@ -13,6 +13,7 @@ export const authOptions: NextAuthOptions = {
                 email: { label: 'Email', type: 'text' },
                 password: { label: 'Password', type: 'password' },
             },
+            // Removed unused @ts-expect-error directives as there is no longer a TypeScript error here.
             async authorize(credentials:any):Promise<any>{
                 await dbConnect();
                 try {

@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { useState } from 'react';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Loader2 } from 'lucide-react';
@@ -81,6 +81,7 @@ export default function SendMessage({ params }: { params: { username: string } }
       setSuggestedMessages(parseStringMessages(suggestions));
     } catch (error) {
       // fallback to default
+      toast.error('Error',{description: 'Failed to fetch suggested messages'});
     } finally {
       setIsSuggestLoading(false);
     }
