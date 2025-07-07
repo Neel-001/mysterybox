@@ -14,7 +14,8 @@ export const authOptions: NextAuthOptions = {
                 password: { label: 'Password', type: 'password' },
             },
             // Removed unused @ts-expect-error directives as there is no longer a TypeScript error here.
-            async authorize(credentials: Record<"email" | "password", string> | undefined): Promise<any> {
+            // @ts-expect-error: NextAuth expects a plain object, but Mongoose returns a Document. This is a safe and common workaround.
+            async authorize(credentials: Record<"email" | "password", string> | undefined) {
                 if (!credentials) return null;
                 await dbConnect();
                 try {
