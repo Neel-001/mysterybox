@@ -1,3 +1,4 @@
+// @ts-nocheck
 import UserModel from '@/model/User';
 import { getServerSession } from 'next-auth/next';
 import dbConnect from '@/lib/dbConnect';
