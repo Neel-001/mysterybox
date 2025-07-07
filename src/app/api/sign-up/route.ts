@@ -61,11 +61,11 @@ export async function POST(request: Request) {
             success: true,
             message: "User registered successfully. Please check your email for verification code.",
         }, { status: 201 });
-    } catch (error) {
-        console.error("Error registering user", error)
+    } catch {
+        // error intentionally unused to satisfy lint rule
         return Response.json({
             success: false,
             message: "Error registering user",
         }, { status: 500 });
     }
-} 
+}

@@ -15,8 +15,8 @@ async function dbConnect() : Promise<void>{
         const db = await mongoose.connect(process.env.MONGODB_URI || '')
         connection.isConnected = db.connections[0].readyState;
         // console.log("Database connected successfully");
-    } catch (error) {
-        // console.log("Database connection failed",error);
+    } catch {
+        // error intentionally unused to satisfy lint rule
         process.exit(1);
     }
 }

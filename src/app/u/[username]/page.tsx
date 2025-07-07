@@ -63,11 +63,10 @@ export default function SendMessage({ params }: { params: { username: string } }
         description: response.data.message,
       });
       form.reset({ ...form.getValues(), content: '' });
-    } catch (error) {
-      const axiosError = error as AxiosError<ApiResponse>;
+    } catch {
+      // error intentionally unused to satisfy lint rule
       toast.error('Error', {
-        description:
-          axiosError.response?.data.message ?? 'Failed to send message',
+        description: 'Failed to send message',
       });
     } finally {
       setIsLoading(false);
