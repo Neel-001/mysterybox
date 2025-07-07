@@ -30,7 +30,7 @@ export async function POST(request: Request) {
             updatedUser
         }, { status: 200 });
     } catch (error) {
-        console.log("failed to update user accepting messages status", error);
+        // console.log("failed to update user accepting messages status", error);
         return Response.json({
             success: false,
             message: "Failed to update accepting messages status"
@@ -63,7 +63,7 @@ export async function GET(request: Request) {
         isAcceptingMessage: foundUser.isAcceptingMessage
     }, { status: 200 });
     } catch (error) {
-        console.log("failed to get user accepting messages status", error);
+        // console.log("failed to get user accepting messages status", error);
         return Response.json({
             success: false,
             message: "Failed to get accepting messages status"

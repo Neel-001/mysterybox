@@ -6,17 +6,17 @@ import { User } from "next-auth";
 import mongoose from "mongoose";
 
 export async function GET(request: Request){
-    console.log("=== GET /api/get-messages called ===");
+    // console.log("=== GET /api/get-messages called ===");
     
     await dbConnect();
     
     try {
         const session = await getServerSession(authOptions);
         
-        console.log("Session object:", JSON.stringify(session, null, 2));
+        // console.log("Session object:", JSON.stringify(session, null, 2));
         
         if(!session) {
-            console.log("No session found");
+            // console.log("No session found");
             return Response.json({
                 success: false,
                 message: "No session found"
@@ -24,7 +24,7 @@ export async function GET(request: Request){
         }
         
         if(!session.user) {
-            console.log("No user in session");
+            // console.log("No user in session");
             return Response.json({
                 success: false,
                 message: "No user in session"
@@ -35,7 +35,7 @@ export async function GET(request: Request){
        
         
         if (!user._id) {
-            console.log("No user ID found");
+            // console.log("No user ID found");
             return Response.json({
                 success: false,
                 message: "No user ID found"
