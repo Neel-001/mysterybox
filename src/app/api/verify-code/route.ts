@@ -1,6 +1,6 @@
 import dbConnect from "@/lib/dbConnect";
 import UserModel from "@/model/User";
-import { decode } from "punycode";
+
 
 
 export async function POST(request:Request){

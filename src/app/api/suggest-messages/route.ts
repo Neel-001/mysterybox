@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { CohereClient } from 'cohere-ai';
 
-export async function POST(req: Request) {
+export async function POST() {
   try {
     const cohere = new CohereClient({
       token: process.env.COHERE_API_KEY!,
@@ -23,13 +23,13 @@ export async function POST(req: Request) {
       temperature: 0.7,
     });
 
-    
+    // Ensure the output is always three questions separated by '||'
     let text = response.generations[0].text.trim();
-   
+    // Remove leading/trailing quotes or whitespace
     text = text.replace(/^['"\s]+|['"\s]+$/g, '');
-    
+    // Split by '||' and filter for real questions
     let questions = text.split('||').map(q => q.trim()).filter(q => q.length > 10 && /[?]$/.test(q));
-   
+    // If not exactly 3, fallback to static suggestions
     if (questions.length !== 3) {
       questions = [
         "What's your favorite book?",
