@@ -7,7 +7,7 @@ import mongoose from "mongoose";
 
 export async function GET(request: Request){
     console.log("=== GET /api/get-messages called ===");
-     
+    
     await dbConnect();
     
     try {

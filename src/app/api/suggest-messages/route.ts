@@ -1,23 +1,46 @@
-import { generateText } from 'ai';
-import { openai } from '@ai-sdk/openai';
 import { NextResponse } from 'next/server';
-
-export const runtime = 'edge';
+import { CohereClient } from 'cohere-ai';
 
 export async function POST(req: Request) {
   try {
-    const prompt =
-      "Create a list of three open-ended and engaging questions formatted as a single string. Each question should be separated by '||'. These questions are for an anonymous social messaging platform, like Qooh.me, and should be suitable for a diverse audience. Avoid personal or sensitive topics, focusing instead on universal themes that encourage friendly interaction. For example, your output should be structured like this: 'What's a hobby you've recently started?||If you could have dinner with any historical figure, who would it be?||What's a simple thing that makes you happy?'. Ensure the questions are intriguing, foster curiosity, and contribute to a positive and welcoming conversational environment.";
-
-    const { text } = await generateText({
-      model: openai('gpt-3.5-turbo-instruct'),
-      prompt,
-      maxTokens: 400,
+    const cohere = new CohereClient({
+      token: process.env.COHERE_API_KEY!,
     });
+    const prompt =
+      `Generate exactly three unique, open-ended, and friendly questions for an anonymous social messaging platform. Each question must:
+      - Be suitable for all ages and backgrounds
+      - Encourage positive, thoughtful, or fun conversation
+      - Avoid personal, sensitive, or controversial topics
+      - Be phrased as a question and end with a question mark
+      
+      Output ONLY the three questions, separated by '||' (no numbering, no extra text, no quotes, no intro or outro). Example output:
+      What's a hobby you've recently started?||If you could have dinner with any historical figure, who would it be?||What's a simple thing that makes you happy?`;
+
+    const response = await cohere.generate({
+      model: 'command',
+      prompt,
+      maxTokens: 100,
+      temperature: 0.7,
+    });
+
     
-    return NextResponse.json({ suggestions: text });
+    let text = response.generations[0].text.trim();
+   
+    text = text.replace(/^['"\s]+|['"\s]+$/g, '');
+    
+    let questions = text.split('||').map(q => q.trim()).filter(q => q.length > 10 && /[?]$/.test(q));
+   
+    if (questions.length !== 3) {
+      questions = [
+        "What's your favorite book?",
+        "If you could travel anywhere, where would you go?",
+        "What's a skill you'd love to learn?"
+      ];
+    }
+    const formatted = questions.join('||');
+    return NextResponse.json({ suggestions: formatted });
   } catch (error) {
-    console.error('An unexpected error occurred:', error);
+    console.error('Cohere API error:', error);
     return NextResponse.json({ error: 'Failed to generate suggestions' }, { status: 500 });
   }
 }
