@@ -4,8 +4,11 @@ import dbConnect from '@/lib/dbConnect';
 import { User } from 'next-auth';
 import { authOptions } from '../../auth/[...nextauth]/options';
 
+import type { NextRequest } from 'next/server';
+
 export async function DELETE(
-  { params }: { params: { messageid: string } } 
+  request: NextRequest,
+  { params }: { params: { messageid: string } }
 ) {
   const messageId = params.messageid;
   await dbConnect();
