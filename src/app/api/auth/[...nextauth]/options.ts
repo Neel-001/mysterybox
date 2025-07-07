@@ -14,30 +14,31 @@ export const authOptions: NextAuthOptions = {
                 password: { label: 'Password', type: 'password' },
             },
             // Removed unused @ts-expect-error directives as there is no longer a TypeScript error here.
-            async authorize(credentials:any):Promise<any>{
+            async authorize(credentials: Record<"email" | "password", string> | undefined): Promise<any> {
+                if (!credentials) return null;
                 await dbConnect();
                 try {
+                    const identifier = credentials.email;
                     const user = await UserModel.findOne({
-                        $or : [
-                            {email:credentials.identifier},
-                            {username:credentials.identifier},
+                        $or: [
+                            { email: identifier },
+                            { username: identifier },
                         ]
-                    })
-                    if(!user){
+                    });
+                    if (!user) {
                         throw new Error("No user found with this email");
                     }
-                    if(!user.isVerified){
+                    if (!user.isVerified) {
                         throw new Error("Please verify your account before login");
                     }
-                    const isPasswordCorrect =  await bcrypt.compare(credentials.password,user.password)
-                    if(isPasswordCorrect){
-                        return user
-                    }
-                    else{
+                    const isPasswordCorrect = await bcrypt.compare(credentials.password, user.password);
+                    if (isPasswordCorrect) {
+                        return user;
+                    } else {
                         throw new Error("Invalid password");
                     }
-                } catch (err:any) {
-                    throw new Error(err)
+                } catch (err: unknown) {
+                    throw err;
                 }
             }
         })

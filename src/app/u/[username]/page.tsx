@@ -64,7 +64,6 @@ export default function SendMessage({ params }: { params: { username: string } }
       });
       form.reset({ ...form.getValues(), content: '' });
     } catch {
-      // error intentionally unused to satisfy lint rule
       toast.error('Error', {
         description: 'Failed to send message',
       });
@@ -79,7 +78,7 @@ export default function SendMessage({ params }: { params: { username: string } }
       const response = await axios.post('/api/suggest-messages');
       const suggestions = response.data.suggestions || initialMessageString;
       setSuggestedMessages(parseStringMessages(suggestions));
-    } catch (error) {
+    } catch {
       // fallback to default
       toast.error('Error',{description: 'Failed to fetch suggested messages'});
     } finally {
