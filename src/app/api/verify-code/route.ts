@@ -8,18 +8,22 @@ export async function POST(request:Request){
      try {
         const {username,code} = await request.json()
         const decodedUsername = decodeURIComponent(username);
-        const user = await UserModel.findOne({username:decodedUsername})
+        const user = await UserModel.findOne({
+            username: { $regex: new RegExp(`^${decodedUsername}$`, 'i') }
+        })
         if(!user){
             return Response.json({
                 success:false,
                 message:"User not found"
             },{status:500})
         }
-        const isCodeValid = user.verifyCode === code;
-        const isCodeNotExpired = new Date(user.verifyCodeExpiry) > new Date()
+        // Debug log for verification
+        console.log('DB verifyCode:', user.verifyCode, 'Input code:', code);
+        const isCodeValid = String(user.verifyCode).trim() === String(code).trim();
+        const isCodeNotExpired = new Date(user.verifyCodeExpiry) > new Date();
         if(isCodeValid && isCodeNotExpired){
-            user.isVerified = true
-            user.save()
+            user.isVerified = true;
+            await user.save();
             return Response.json({
                 success:true,
                 message:"Account verified successfully"

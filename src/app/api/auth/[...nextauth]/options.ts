@@ -10,16 +10,16 @@ export const authOptions: NextAuthOptions = {
             id: "credentials",
             name: "Credentials",
             credentials: {
-                email: { label: 'Email', type: 'text' },
+                identifier: { label: 'Email or Username', type: 'text' },
                 password: { label: 'Password', type: 'password' },
             },
             // Removed unused @ts-expect-error directives as there is no longer a TypeScript error here.
             // @ts-expect-error: NextAuth expects a plain object, but Mongoose returns a Document. This is a safe and common workaround.
-            async authorize(credentials: Record<"email" | "password", string> | undefined) {
+            async authorize(credentials: Record<"identifier" | "password", string> | undefined) {
                 if (!credentials) return null;
                 await dbConnect();
                 try {
-                    const identifier = credentials.email;
+                    const identifier = credentials.identifier;
                     const user = await UserModel.findOne({
                         $or: [
                             { email: identifier },
@@ -27,7 +27,7 @@ export const authOptions: NextAuthOptions = {
                         ]
                     });
                     if (!user) {
-                        throw new Error("No user found with this email");
+                        throw new Error("No user found with this email or username");
                     }
                     if (!user.isVerified) {
                         throw new Error("Please verify your account before login");

@@ -3,7 +3,7 @@
 import { ApiResponse } from '@/types/ApiResponse';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDebounceCallback } from 'usehooks-ts';
 import * as z from 'zod';
@@ -41,30 +41,29 @@ export default function SignUpForm() {
     },
   });
   const checkUsernameUnique = useDebounceCallback(async (username: string) => {
-    if (username) {
-      setIsCheckingUsername(true);
+    if (!username) {
       setUsernameMessage('');
-      try {
-        const response = await axios.get<ApiResponse>(
-          `/api/check-username-unique?username=${username}`
-        );
-        setUsernameMessage(response.data.message);
-      } catch (error) {
-        const axiosError = error as AxiosError<ApiResponse>;
-        setUsernameMessage(
-          axiosError.response?.data.message ?? 'Error checking username'
-        );
-      } finally {
-        setIsCheckingUsername(false);
-      }
+      setIsCheckingUsername(false);
+      return;
+    }
+    setIsCheckingUsername(true);
+    setUsernameMessage('');
+    try {
+      const response = await axios.get<ApiResponse>(
+        `/api/check-username-unique?username=${username}`
+      );
+      setUsernameMessage(response.data.message);
+    } catch (error) {
+      const axiosError = error as AxiosError<ApiResponse>;
+      setUsernameMessage(
+        axiosError.response?.data.message ?? 'Error checking username'
+      );
+    } finally {
+      setIsCheckingUsername(false);
     }
   }, 300);
 
-  useEffect(() => {
-    if (username) {
-      checkUsernameUnique(username);
-    }
-  }, [username, checkUsernameUnique]);
+
   const onSubmit = async (data: z.infer<typeof signupSchema>) => {
     setIsSubmitting(true);
     try {
@@ -115,6 +114,7 @@ export default function SignUpForm() {
                     onChange={(e) => {
                       field.onChange(e);
                       setUsername(e.target.value);
+                      checkUsernameUnique(e.target.value);
                     }}
                   />
                   {isCheckingUsername && <Loader2 className="animate-spin" />}
